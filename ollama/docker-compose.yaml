@@ -1,0 +1,26 @@
+services:
+
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama
+#    command: [ "run", "llama3.2" ]
+    entrypoint: [ "/bin/bash", "-c", "/app/startup.sh" ]
+    volumes:
+      - ./startup.sh:/app/startup.sh
+      - models:/root/.ollama/models
+      - data:/root/.ollama
+    ports:
+      - "11434:11434"
+    networks:
+      - private_net
+
+networks:
+  private_net:
+    driver: bridge
+
+volumes:
+
+  data:
+    driver: local
+  models:
+    driver: local
