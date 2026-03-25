@@ -1,0 +1,32 @@
+name: dev_skywalking
+networks:
+  private_net:
+    external: true
+
+services:
+  oap:
+    image: apache/skywalking-oap-server:10.0.0
+    container_name: oap
+    environment:
+      SW_STORAGE: "h2"          # Use H2 storage
+      SW_CORE_GRPC_PORT: "11800"
+      SW_CORE_REST_PORT: "12800"
+    ports:
+      - "11800:11800"          # gRPC port (for agents/plugins)
+      - "12800:12800"          # REST API / query
+    restart: always
+    networks:
+      - private_net
+
+  ui:
+    image: apache/skywalking-ui:10.0.0
+    container_name: skywalking-ui
+    depends_on:
+      - oap
+    environment:
+      - SW_OAP_ADDRESS=http://oap:12800   # Connects UI to OAP REST API
+    ports:
+      - "8080:8080"            # Web UI
+    restart: always
+    networks:
+      - private_net

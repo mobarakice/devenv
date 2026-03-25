@@ -1,0 +1,13 @@
+name: dev_k6
+networks:
+  private_net:
+    external: true
+services:
+  k6:
+    image: grafana/k6:latest
+    container_name: k6
+    volumes:
+      - ./test.js:/scripts/test.js
+    entrypoint: [ "k6", "run", "/scripts/test.js" ]
+    networks:
+      - private_net

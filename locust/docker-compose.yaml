@@ -1,0 +1,26 @@
+name: dev_locust
+networks:
+  private_net:
+    external: true
+services:
+  locust:
+    image: locustio/locust
+    ports:
+      - "8089:8089"    # UI / web interface
+      - "5557:5557"    # For worker <-> master communication (if using distributed mode)
+      - "5558:5558"    # For worker <-> master communication (if using distributed mode)
+    volumes:
+      - ./locust-files:/mnt/locust   # mount your locust scripts / config
+    environment:
+      # Example: specify the locustfile to run
+      LOCUST_FILE: locustfile.py
+      # Other possible env variables:
+      # LOCUST_HOST: "http://target-app"
+      # LOCUST_USERS: 10
+      # LOCUST_SPAWN_RATE: 1
+      # LOCUST_RUN_TIME: "30s"
+    command: >
+      -f /mnt/locust/locustfile.py
+      --host=http://target-app
+    networks:
+      - private_net

@@ -1,0 +1,68 @@
+name: dev_redis
+networks:
+  private_net:
+    external: true
+services:
+  redis-master:
+    image: redis/redis-stack:7.4.0-v8
+    container_name: redis-master
+    restart: always
+    networks:
+      - private_net
+    ports:
+      - "6379:6379"
+      - "8001:8001"
+    command: >
+      redis-server
+      --requirepass 1234
+      --dir /data/redis
+      --dbfilename dump.rdb
+      --appendonly yes
+      --loadmodule /opt/redis-stack/lib/redisearch.so
+      --loadmodule /opt/redis-stack/lib/rejson.so
+    volumes:
+      - redis-master-data:/data
+
+  redis-replica:
+    image: redis/redis-stack:7.4.0-v8
+    container_name: redis-replica
+    restart: always
+    networks:
+      - private_net
+    ports:
+      - "6380:6379"
+    command: >
+      redis-server
+      --requirepass 1234
+      --replicaof redis-master 6379
+      --masterauth 1234
+      --dir /data/redis
+      --dbfilename dump.rdb
+      --appendonly yes
+      --loadmodule /opt/redis-stack/lib/redisearch.so
+      --loadmodule /opt/redis-stack/lib/rejson.so
+    volumes:
+      - redis-replica-data:/data
+    depends_on:
+      - redis-master
+
+  redisinsight:
+    image: redis/redisinsight:latest
+    container_name: redisinsight
+    ports:
+      - "5540:5540" # default UI port
+    volumes:
+      - redisinsight_data:/data
+    restart: unless-stopped
+    networks:
+      - private_net
+
+volumes:
+  redisinsight_data:
+    driver: local
+  redis-data:
+    driver: local
+  redis-master-data:
+    driver: local
+  redis-replica-data:
+    driver: local

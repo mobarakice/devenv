@@ -1,0 +1,25 @@
+name: dev_etcd
+networks:
+  private_net:
+    external: true
+services:
+  etcd:
+    #    image: quay.io/coreos/etcd:v3.6.5
+    image: bitnamilegacy/etcd:3.6.4
+    container_name: etcd
+    restart: always
+    networks:
+      - private_net
+    ports:
+      - "2379:2379/tcp"                    # Exposing etcd ports for client communication
+      - "2380:2380/tcp"                    # Exposing etcd ports for internal cluster communication
+    environment:
+      - ETCD_LISTEN_CLIENT_URLS=http://0.0.0.0:2379
+      - ETCD_ADVERTISE_CLIENT_URLS=http://etcd:2379
+      - ALLOW_NONE_AUTHENTICATION=yes
+    volumes:
+      - etcd_data:/bitnami/etcd #/var/lib/etcd     # Persistent volume for etcd data
+
+volumes:
+  etcd_data:
+    driver: local

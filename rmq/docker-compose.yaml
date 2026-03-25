@@ -1,0 +1,18 @@
+name: dev_rmq
+networks:
+  private_net:
+    external: true
+
+services:
+  rmq:
+    image: rabbitmq:4.2.5-management-alpine
+    container_name: rmq
+    restart: always
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=1234
+    ports:
+      - "5672:5672" # Communication port
+      - "15672:15672" # Admin UI port
+    networks:
+      - private_net
