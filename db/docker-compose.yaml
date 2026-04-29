@@ -5,7 +5,7 @@ networks:
 name: dev_db
 services:
   primary:
-    image: postgres:16
+    image: postgres:17
     container_name: primary
     environment:
       POSTGRES_DB: test
@@ -27,7 +27,7 @@ services:
       - private_net
 
   replica:
-    image: postgres:16
+    image: postgres:17
     container_name: replica
     environment:
       POSTGRES_DB: test
@@ -63,7 +63,7 @@ services:
   #      - private_net
 
   pgadmin:
-    image: dpage/pgadmin4:9.11
+    image: dpage/pgadmin4:9.14.0
     container_name: pgadmin
     environment:
       PGADMIN_DEFAULT_EMAIL: admin@admin.com

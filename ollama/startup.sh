@@ -7,7 +7,8 @@ ollama serve &
 sleep 5
 
 # Download the llama3.2 model by running it once
-ollama run llama3.2
+ollama run qwen3.6:35b
+#ollama run llama3.2
 
 # Keep the container running by bringing the Ollama server to the foreground
 wait
