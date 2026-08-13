@@ -1,53 +1,54 @@
 networks:
-  private_net:
+  default:
+    name: private-net
     external: true
 
 name: dev_db
 services:
-  primary:
-    image: postgres:17
-    container_name: primary
-    environment:
-      POSTGRES_DB: test
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: 1234
-      POSTGRES_REPLICATION_USER: postgres
-      POSTGRES_REPLICATION_PASSWORD: 1234
-    volumes:
-      - ./primary/data:/var/lib/postgresql/data
-      - ./primary/init:/docker-entrypoint-initdb.d
-    ports:
-      - "5432:5432"
-    healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER}" ]
-      interval: 5s
-      timeout: 5s
-      retries: 20
-    networks:
-      - private_net
-
-  replica:
-    image: postgres:17
-    container_name: replica
-    environment:
-      POSTGRES_DB: test
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: 1234
-      POSTGRES_REPLICATION_USER: postgres
-      POSTGRES_REPLICATION_PASSWORD: 1234
-      PRIMARY_HOST: primary
-      # Optional: set a slot name; omit to run without slots
-      REPLICATION_SLOT_NAME: standby1
-    volumes:
-      - ./replica/data:/var/lib/postgresql/data
-      - ./replica/init:/docker-entrypoint-initdb.d
-    ports:
-      - "5433:5432"
-    depends_on:
-      primary:
-        condition: service_healthy
-    networks:
-      - private_net
+#  primary:
+#    image: postgres:17
+#    container_name: primary
+#    environment:
+#      POSTGRES_DB: test
+#      POSTGRES_USER: postgres
+#      POSTGRES_PASSWORD: 1234
+#      POSTGRES_REPLICATION_USER: postgres
+#      POSTGRES_REPLICATION_PASSWORD: 1234
+#    volumes:
+#      - ./primary/data:/var/lib/postgresql/data
+#      - ./primary/init:/docker-entrypoint-initdb.d
+#    ports:
+#      - "5432:5432"
+#    healthcheck:
+#      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER}" ]
+#      interval: 5s
+#      timeout: 5s
+#      retries: 20
+#    networks:
+#      - private_net
+#
+#  replica:
+#    image: postgres:17
+#    container_name: replica
+#    environment:
+#      POSTGRES_DB: test
+#      POSTGRES_USER: postgres
+#      POSTGRES_PASSWORD: 1234
+#      POSTGRES_REPLICATION_USER: postgres
+#      POSTGRES_REPLICATION_PASSWORD: 1234
+#      PRIMARY_HOST: primary
+#      # Optional: set a slot name; omit to run without slots
+#      REPLICATION_SLOT_NAME: standby1
+#    volumes:
+#      - ./replica/data:/var/lib/postgresql/data
+#      - ./replica/init:/docker-entrypoint-initdb.d
+#    ports:
+#      - "5433:5432"
+#    depends_on:
+#      primary:
+#        condition: service_healthy
+#    networks:
+#      - private_net
 
   #  postgres:
   #    image: postgres:latest
@@ -74,5 +75,3 @@ services:
       - ./pgadmin/data:/var/lib/pgadmin
     ports:
       - "5050:5050"
-    networks:
-      - private_net
